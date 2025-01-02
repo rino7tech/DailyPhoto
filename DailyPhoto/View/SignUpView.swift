@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Colorful
 
 struct SignUpView: View {
     @ObservedObject var viewModel: AuthViewModel
@@ -16,22 +17,27 @@ struct SignUpView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.2)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+            ColorfulView(animation: .easeInOut(duration: 0.5),colors: [.blue, .purple])
                 .edgesIgnoringSafeArea(.all)
 
-            RoundedRectangle(cornerRadius: 25)
-                .fill(Color.white)
-                .frame(width: UIScreen.main.bounds.width * 0.93, height: UIScreen.main.bounds.height * 0.5)
-                .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
+            VStack {
+                Spacer()
+                RoundedRectangle(cornerRadius: 25)
+                    .fill(Color.white.opacity(0.5))
+                    .frame(width: UIScreen.main.bounds.width * 0.93, height: UIScreen.main.bounds.height * 0.57)
+                    .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
+                Spacer()
+            }
+
 
             VStack(spacing: 20) {
-                Text("Sign Up")
+                Text("アカウント登録")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundColor(.blue)
                     .padding(.bottom, 20)
 
                 VStack(spacing: 16) {
-                    TextField("Username", text: $viewModel.name, onEditingChanged: { editing in
+                    TextField("名前", text: $viewModel.name, onEditingChanged: { editing in
                         withAnimation {
                             isUsernameFocused = editing
                         }
@@ -45,7 +51,7 @@ struct SignUpView: View {
                             .stroke(isUsernameFocused ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
                     )
 
-                    TextField("Email", text: $viewModel.email, onEditingChanged: { editing in
+                    TextField("メールアドレス", text: $viewModel.email, onEditingChanged: { editing in
                         withAnimation {
                             isEmailFocused = editing
                         }
@@ -60,7 +66,7 @@ struct SignUpView: View {
                             .stroke(isEmailFocused ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
                     )
 
-                    SecureField("Password", text: $viewModel.password)
+                    SecureField("パスワード", text: $viewModel.password)
                         .padding()
                         .background(isPasswordFocused ? Color.blue.opacity(0.1) : Color.white)
                         .cornerRadius(12)
@@ -81,7 +87,7 @@ struct SignUpView: View {
                 Button(action: {
                     viewModel.signUpAndLogin()
                 }) {
-                    Text("Sign Up")
+                    Text("アカウント登録")
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
@@ -108,7 +114,7 @@ struct SignUpView: View {
                         window.makeKeyAndVisible()
                     }
                 }) {
-                    Text("Sign Inに戻る")
+                    Text("ログインに戻る")
                         .font(.headline)
                         .foregroundColor(.blue)
                 }
