@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var authViewModel = AuthViewModel()
+    
     var body: some View {
-        SigninView()
+        if authViewModel.isLoggedIn {
+            HomeView()
+        } else {
+            SignInView()
+        }
     }
 }
 

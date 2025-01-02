@@ -11,21 +11,40 @@ struct HomeView: View {
     @StateObject private var viewModel = AuthViewModel()
 
     var body: some View {
-        VStack {
-            if viewModel.name.isEmpty {
-                Text("読み込み中...")
-                    .font(.headline)
+        NavigationStack {
+            if viewModel.isLoggedIn {
+                SignInView()
             } else {
-                Text("ようこそ、\(viewModel.name)さん！")
-                    .font(.largeTitle)
-                    .padding()
-            }
+                VStack {
+                    if viewModel.name.isEmpty {
+                        Text("読み込み中...")
+                            .font(.headline)
+                    } else {
+                        Text("ようこそ、\(viewModel.name)さん！")
+                            .font(.largeTitle)
+                            .padding()
+                    }
 
-            Text("これはホーム画面です。")
+                    Button(action: {
+                        viewModel.logout()
+                    }) {
+                        Text("ログアウト")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.red)
+                            .cornerRadius(10)
+                    }
+
+                    Text("これはホーム画面です。")
+                }
+                .padding()
+                .onAppear {
+                    viewModel.fetchProfile()
+                }
+
+            }
         }
-        .onAppear {
-            viewModel.fetchProfile()
-        }
-        .padding()
     }
 }
