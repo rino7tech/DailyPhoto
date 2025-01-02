@@ -19,21 +19,17 @@ class AuthViewModel: ObservableObject {
     func signUp() {
         Task {
             do {
-                // Firebase Authでユーザー作成
                 let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
                 let uid = authResult.user.uid
 
-                // Firestoreにユーザープロフィールを保存
                 let profileModel = ProfileModel(name: name, createdAt: Date())
                 try await FirebaseClient.settingProfile(data: profileModel, uid: uid)
 
-                // サインアップ成功
                 DispatchQueue.main.async {
                     self.isSignedUp = true
                     self.errorMessage = ""
                 }
             } catch {
-                // エラー処理
                 DispatchQueue.main.async {
                     self.isSignedUp = false
                     self.errorMessage = "エラー: \(error.localizedDescription)"
@@ -43,57 +39,52 @@ class AuthViewModel: ObservableObject {
     }
 
     func signUpAndLogin() {
-            Task {
-                do {
-                    // Firebase Authでユーザー作成
-                    let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-                    let uid = authResult.user.uid
+        Task {
+            do {
+                let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
+                let uid = authResult.user.uid
 
-                    // Firestoreにユーザープロフィールを保存
-                    let profileData = ProfileModel(name: name, createdAt: Date())
-                    try await FirebaseClient.settingProfile(data: profileData, uid: uid)
+                let profileData = ProfileModel(name: name, createdAt: Date())
+                try await FirebaseClient.settingProfile(data: profileData, uid: uid)
 
-                    // 自動ログイン状態にする
-                    DispatchQueue.main.async {
-                        self.isLoggedIn = true
-                        self.errorMessage = ""
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        self.errorMessage = "エラー: \(error.localizedDescription)"
-                    }
+                DispatchQueue.main.async {
+                    self.isLoggedIn = true
+                    self.errorMessage = ""
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.errorMessage = "エラー: \(error.localizedDescription)"
                 }
             }
         }
+    }
 
-        func login() {
-            Task {
-                do {
-                    try await Auth.auth().signIn(withEmail: email, password: password)
-                    DispatchQueue.main.async {
-                        self.isLoggedIn = true
-                        self.errorMessage = ""
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        self.isLoggedIn = false
-                        self.errorMessage = "ログインエラー: \(error.localizedDescription)"
-                    }
+    func login() {
+        Task {
+            do {
+                try await Auth.auth().signIn(withEmail: email, password: password)
+                DispatchQueue.main.async {
+                    self.isLoggedIn = true
+                    self.errorMessage = ""
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.isLoggedIn = false
+                    self.errorMessage = "ログインエラー: \(error.localizedDescription)"
                 }
             }
         }
+    }
 
 
     func logout() {
         do {
-            // Firebase Authでログアウト
             try Auth.auth().signOut()
             DispatchQueue.main.async {
                 self.isLoggedIn = false
                 self.errorMessage = ""
             }
         } catch {
-            // エラー処理
             DispatchQueue.main.async {
                 self.errorMessage = "ログアウトエラー: \(error.localizedDescription)"
             }
@@ -103,17 +94,34 @@ class AuthViewModel: ObservableObject {
     func resetPassword() {
         Task {
             do {
-                // Firebase Authでパスワードリセットメール送信
                 try await Auth.auth().sendPasswordReset(withEmail: email)
 
-                // 成功メッセージ
                 DispatchQueue.main.async {
                     self.errorMessage = "パスワードリセットメールを送信しました。"
                 }
             } catch {
-                // エラー処理
                 DispatchQueue.main.async {
                     self.errorMessage = "パスワードリセットエラー: \(error.localizedDescription)"
+                }
+            }
+        }
+    }
+    func fetchProfile() {
+        Task {
+            do {
+                guard let uid = Auth.auth().currentUser?.uid else {
+                    DispatchQueue.main.async {
+                        self.errorMessage = "ユーザーが見つかりません。"
+                    }
+                    return
+                }
+                let profile = try await FirebaseClient.getProfileData(uid: uid)
+                DispatchQueue.main.async {
+                    self.name = profile.name
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.errorMessage = "プロフィール取得エラー: \(error.localizedDescription)"
                 }
             }
         }

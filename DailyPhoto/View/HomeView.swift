@@ -8,23 +8,24 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var viewModel = AuthViewModel()
+
     var body: some View {
         VStack {
-            Text("ようこそ！")
-                .font(.largeTitle)
-                .padding()
-            Button(action: {
-                authViewModel.logout()
-            }) {
-                Text("ログアウト")
+            if viewModel.name.isEmpty {
+                Text("読み込み中...")
                     .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
+            } else {
+                Text("ようこそ、\(viewModel.name)さん！")
+                    .font(.largeTitle)
                     .padding()
-                    .background(Color.red)
-                    .cornerRadius(10)
             }
+
+            Text("これはホーム画面です。")
         }
+        .onAppear {
+            viewModel.fetchProfile()
+        }
+        .padding()
     }
 }
