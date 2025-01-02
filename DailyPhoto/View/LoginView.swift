@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Colorful
 
 struct LoginView: View {
     @StateObject private var viewModel = AuthViewModel()
@@ -14,13 +15,12 @@ struct LoginView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.2)]), startPoint: .topLeading, endPoint: .bottomTrailing)
-                .edgesIgnoringSafeArea(.all)
-
+            ColorfulView(animation: .easeInOut(duration: 0.5),colors: [.blue, .purple])
+                .ignoresSafeArea()
             VStack {
                 Spacer()
                 RoundedRectangle(cornerRadius: 25)
-                    .fill(Color.white)
+                    .fill(Color.white.opacity(0.5))
                     .frame(width: UIScreen.main.bounds.width * 0.93, height: UIScreen.main.bounds.height * 0.57)
                     .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
                 Spacer()
@@ -30,8 +30,7 @@ struct LoginView: View {
                 Spacer()
                 Text("ログイン")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundColor(.blue)
-                    .padding(.bottom, 10)
+                    .foregroundColor(.blue)                    .padding(.bottom, 10)
 
                 VStack(spacing: 16) {
                     TextField("メールアドレス", text: $viewModel.email, onEditingChanged: { editing in

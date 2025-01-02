@@ -16,6 +16,7 @@
 		237F90FD2D26C38D0077E851 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 237F90FC2D26C38D0077E851 /* FirebaseMessaging */; };
 		237F90FF2D26C38D0077E851 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 237F90FE2D26C38D0077E851 /* FirebaseStorage */; };
 		237F91312D26E09E0077E851 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 237F91302D26E09E0077E851 /* GoogleService-Info.plist */; };
+		237F914D2D270CF00077E851 /* Colorful in Frameworks */ = {isa = PBXBuildFile; productRef = 237F914C2D270CF00077E851 /* Colorful */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 				237F90FD2D26C38D0077E851 /* FirebaseMessaging in Frameworks */,
 				237F90F72D26C38D0077E851 /* FirebaseDatabase in Frameworks */,
 				237F90FB2D26C38D0077E851 /* FirebaseFunctions in Frameworks */,
+				237F914D2D270CF00077E851 /* Colorful in Frameworks */,
 				237F90FF2D26C38D0077E851 /* FirebaseStorage in Frameworks */,
 				237F90F92D26C38D0077E851 /* FirebaseFirestore in Frameworks */,
 				237F90F32D26C38D0077E851 /* FirebaseAuth in Frameworks */,
@@ -95,6 +97,7 @@
 				237F90FA2D26C38D0077E851 /* FirebaseFunctions */,
 				237F90FC2D26C38D0077E851 /* FirebaseMessaging */,
 				237F90FE2D26C38D0077E851 /* FirebaseStorage */,
+				237F914C2D270CF00077E851 /* Colorful */,
 			);
 			productName = DailyPhoto;
 			productReference = 237F90532D267A770077E851 /* DailyPhoto.app */;
@@ -126,6 +129,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				237F90EF2D26C38D0077E851 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				237F914B2D270CF00077E851 /* XCRemoteSwiftPackageReference "Colorful" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 237F90542D267A770077E851 /* Products */;
@@ -368,6 +372,14 @@
 				minimumVersion = 11.6.0;
 			};
 		};
+		237F914B2D270CF00077E851 /* XCRemoteSwiftPackageReference "Colorful" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/Colorful";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -410,6 +422,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 237F90EF2D26C38D0077E851 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		237F914C2D270CF00077E851 /* Colorful */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 237F914B2D270CF00077E851 /* XCRemoteSwiftPackageReference "Colorful" */;
+			productName = Colorful;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
