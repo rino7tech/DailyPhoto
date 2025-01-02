@@ -8,13 +8,17 @@
 import SwiftUI
 
 struct SignUpView: View {
-    @StateObject private var viewModel = AuthViewModel()
+    @ObservedObject var viewModel: AuthViewModel
 
     var body: some View {
         VStack(spacing: 20) {
             Text("新規ユーザー登録")
                 .font(.largeTitle)
                 .bold()
+
+            TextField("ユーザー名", text: $viewModel.name)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.horizontal)
 
             TextField("メールアドレス", text: $viewModel.email)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -26,7 +30,7 @@ struct SignUpView: View {
                 .padding(.horizontal)
 
             Button(action: {
-                viewModel.signUp()
+                viewModel.signUpAndLogin()
             }) {
                 Text("登録")
                     .font(.headline)
@@ -45,10 +49,11 @@ struct SignUpView: View {
                     .padding()
             }
 
-            if viewModel.isSignedUp {
-                Text("登録に成功しました！")
-                    .foregroundColor(.green)
-                    .bold()
+            NavigationLink(
+                destination: HomeView(),
+                isActive: $viewModel.isLoggedIn
+            ) {
+                EmptyView()
             }
         }
         .padding()
