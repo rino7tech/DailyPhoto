@@ -9,23 +9,63 @@ import SwiftUI
 
 struct LoginView: View {
     @StateObject private var viewModel = AuthViewModel()
-    @State private var showSignUpView = false
+    @State private var isEmailFocused: Bool = false
+    @State private var isPasswordFocused: Bool = false
 
     var body: some View {
-        NavigationView {
+        ZStack {
+            LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.2)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                .edgesIgnoringSafeArea(.all)
+
+            VStack {
+                Spacer()
+                RoundedRectangle(cornerRadius: 25)
+                    .fill(Color.white)
+                    .frame(width: UIScreen.main.bounds.width * 0.93, height: UIScreen.main.bounds.height * 0.57)
+                    .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
+                Spacer()
+            }
+
             VStack(spacing: 20) {
+                Spacer()
                 Text("ログイン")
-                    .font(.largeTitle)
-                    .bold()
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundColor(.blue)
+                    .padding(.bottom, 10)
 
-                TextField("メールアドレス", text: $viewModel.email)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .autocapitalization(.none)
-                    .padding(.horizontal)
+                VStack(spacing: 16) {
+                    TextField("メールアドレス", text: $viewModel.email, onEditingChanged: { editing in
+                        withAnimation {
+                            isEmailFocused = editing
+                        }
+                    })
+                    .keyboardType(.emailAddress)
+                    .padding()
+                    .background(isEmailFocused ? Color.blue.opacity(0.1) : Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: isEmailFocused ? Color.blue.opacity(0.3) : Color.gray.opacity(0.2), radius: 4, x: 0, y: 2)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(isEmailFocused ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
+                    )
 
-                SecureField("パスワード", text: $viewModel.password)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding(.horizontal)
+                    SecureField("パスワード", text: $viewModel.password)
+                        .padding()
+                        .background(isPasswordFocused ? Color.blue.opacity(0.1) : Color.white)
+                        .cornerRadius(12)
+                        .shadow(color: isPasswordFocused ? Color.blue.opacity(0.3) : Color.gray.opacity(0.2), radius: 4, x: 0, y: 2)
+                        .onTapGesture {
+                            withAnimation {
+                                isPasswordFocused = true
+                            }
+                        }
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(isPasswordFocused ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
+                        )
+                }
+                .padding(.horizontal, 32)
+                .padding(.bottom, 20)
 
                 Button(action: {
                     viewModel.login()
@@ -33,12 +73,31 @@ struct LoginView: View {
                     Text("ログイン")
                         .font(.headline)
                         .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
-                        .cornerRadius(10)
+                        .frame(maxWidth: .infinity)
+                        .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
+                        .cornerRadius(25)
+                        .shadow(color: Color.purple.opacity(0.5), radius: 10, x: 0, y: 5)
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 32)
+
+                Button(action: {
+                    let signUpView = UIHostingController(rootView: SignUpView(viewModel: viewModel))
+                    if let window = UIApplication.shared.windows.first {
+                        window.rootViewController = signUpView
+                        window.makeKeyAndVisible()
+                    }
+                }) {
+                    Text("新規登録")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
+                        .cornerRadius(25)
+                        .shadow(color: Color.purple.opacity(0.5), radius: 10, x: 0, y: 5)
+                }
+                .padding(.horizontal, 32)
 
                 Button(action: {
                     viewModel.resetPassword()
@@ -51,33 +110,16 @@ struct LoginView: View {
                 if !viewModel.errorMessage.isEmpty {
                     Text(viewModel.errorMessage)
                         .foregroundColor(.red)
+                        .font(.subheadline)
                         .multilineTextAlignment(.center)
-                        .padding()
+                        .padding(.horizontal, 32)
+                        .transition(.opacity)
                 }
 
                 Spacer()
-
-                NavigationLink(
-                    destination: SignUpView(viewModel: viewModel),
-                    isActive: $showSignUpView
-                ) {
-                    Button(action: {
-                        showSignUpView = true
-                    }) {
-                        Text("新規登録")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                    }
-                }
-
-                NavigationLink(
-                    destination: HomeView(),
-                    isActive: $viewModel.isLoggedIn
-                ) {
-                    EmptyView()
-                }
             }
-            .padding()
+            .padding(.top, 40)
         }
+        .animation(.easeInOut, value: viewModel.errorMessage)
     }
 }

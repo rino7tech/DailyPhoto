@@ -100,6 +100,19 @@ struct SignUpView: View {
                         .padding(.horizontal, 32)
                         .transition(.opacity)
                 }
+
+                Button(action: {
+                    let loginView = UIHostingController(rootView: LoginView())
+                    if let window = UIApplication.shared.windows.first {
+                        window.rootViewController = loginView
+                        window.makeKeyAndVisible()
+                    }
+                }) {
+                    Text("Sign Inに戻る")
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                }
+                .padding(.top, 10)
             }
         }
         .animation(.easeInOut, value: viewModel.errorMessage)
