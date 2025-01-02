@@ -15,12 +15,10 @@
 		237F90FB2D26C38D0077E851 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 237F90FA2D26C38D0077E851 /* FirebaseFunctions */; };
 		237F90FD2D26C38D0077E851 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 237F90FC2D26C38D0077E851 /* FirebaseMessaging */; };
 		237F90FF2D26C38D0077E851 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 237F90FE2D26C38D0077E851 /* FirebaseStorage */; };
-		237F91072D26C47A0077E851 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 237F91062D26C47A0077E851 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		237F90532D267A770077E851 /* DailyPhoto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DailyPhoto.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		237F91062D26C47A0077E851 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -53,7 +51,6 @@
 		237F904A2D267A770077E851 = {
 			isa = PBXGroup;
 			children = (
-				237F91062D26C47A0077E851 /* GoogleService-Info.plist */,
 				237F90552D267A770077E851 /* DailyPhoto */,
 				237F90542D267A770077E851 /* Products */,
 			);
@@ -142,7 +139,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				237F91072D26C47A0077E851 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
