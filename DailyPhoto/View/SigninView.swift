@@ -8,29 +8,29 @@
 import SwiftUI
 import Colorful
 
-struct LoginView: View {
+struct SigninView: View {
     @StateObject private var viewModel = AuthViewModel()
     @State private var isEmailFocused: Bool = false
     @State private var isPasswordFocused: Bool = false
 
     var body: some View {
         ZStack {
-            ColorfulView(animation: .easeInOut(duration: 0.5),colors: [.blue, .purple])
+            ColorfulView(animation: .easeInOut(duration: 0.5),colors: [.customPink, .customLightPink.opacity(0.5)])
                 .ignoresSafeArea()
             VStack {
                 Spacer()
                 RoundedRectangle(cornerRadius: 25)
                     .fill(Color.white.opacity(0.5))
                     .frame(width: UIScreen.main.bounds.width * 0.93, height: UIScreen.main.bounds.height * 0.57)
-                    .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
+                    .shadow(color: .gray.opacity(0.5), radius: 5, x: 0, y: 5)
                 Spacer()
             }
 
             VStack(spacing: 20) {
                 Spacer()
-                Text("ログイン")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundColor(.blue)                    .padding(.bottom, 10)
+                Text("SignIn")
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundColor(.customPink)                    .padding(.bottom, 10)
 
                 VStack(spacing: 16) {
                     TextField("メールアドレス", text: $viewModel.email, onEditingChanged: { editing in
@@ -40,28 +40,20 @@ struct LoginView: View {
                     })
                     .keyboardType(.emailAddress)
                     .padding()
-                    .background(isEmailFocused ? Color.blue.opacity(0.1) : Color.white)
+                    .background(Color.white.opacity(0.7))
                     .cornerRadius(12)
-                    .shadow(color: isEmailFocused ? Color.blue.opacity(0.3) : Color.gray.opacity(0.2), radius: 4, x: 0, y: 2)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(isEmailFocused ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
-                    )
+                    .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 5)
 
                     SecureField("パスワード", text: $viewModel.password)
                         .padding()
-                        .background(isPasswordFocused ? Color.blue.opacity(0.1) : Color.white)
+                        .background(Color.white.opacity(0.7))
                         .cornerRadius(12)
-                        .shadow(color: isPasswordFocused ? Color.blue.opacity(0.3) : Color.gray.opacity(0.2), radius: 4, x: 0, y: 2)
+                        .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 5)
                         .onTapGesture {
                             withAnimation {
                                 isPasswordFocused = true
                             }
                         }
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(isPasswordFocused ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
-                        )
                 }
                 .padding(.horizontal, 32)
                 .padding(.bottom, 20)
@@ -69,14 +61,14 @@ struct LoginView: View {
                 Button(action: {
                     viewModel.login()
                 }) {
-                    Text("ログイン")
+                    Text("サインイン")
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
+                        .background(LinearGradient(gradient: Gradient(colors: [Color.customPink,Color.customLightPink.opacity(0.5)]), startPoint: .bottomLeading, endPoint: .topLeading))
                         .cornerRadius(25)
-                        .shadow(color: Color.purple.opacity(0.5), radius: 10, x: 0, y: 5)
+                        .shadow(color: Color.CustomPink.opacity(0.5), radius: 10, x: 0, y: 5)
                 }
                 .padding(.horizontal, 32)
 
@@ -89,21 +81,23 @@ struct LoginView: View {
                 }) {
                     Text("新規登録")
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(.customPink)
+                        .fontWeight(.bold)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
+                        .background(Color.white.opacity(0.8))
                         .cornerRadius(25)
-                        .shadow(color: Color.purple.opacity(0.5), radius: 10, x: 0, y: 5)
+                        .shadow(color: Color.CustomPink.opacity(0.5), radius: 10, x: 0, y: 5)
                 }
                 .padding(.horizontal, 32)
 
                 Button(action: {
                     viewModel.resetPassword()
                 }) {
-                    Text("パスワードを忘れましたか？")
+                    Text("パスワードをお忘れですか？")
                         .font(.subheadline)
-                        .foregroundColor(.blue)
+                        .foregroundColor(.black)
+                        .padding(.top, 5)
                 }
 
                 if !viewModel.errorMessage.isEmpty {
@@ -118,6 +112,9 @@ struct LoginView: View {
                 Spacer()
             }
             .padding(.top, 40)
+            .onTapGesture {
+                UIApplication.shared.hideKeyboard()
+            }
         }
         .animation(.easeInOut, value: viewModel.errorMessage)
     }

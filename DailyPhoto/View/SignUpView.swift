@@ -17,7 +17,7 @@ struct SignUpView: View {
 
     var body: some View {
         ZStack {
-            ColorfulView(animation: .easeInOut(duration: 0.5),colors: [.blue, .purple])
+            ColorfulView(animation: .easeInOut(duration: 0.5),colors: [.customPink, .customLightPink.opacity(0.5)])
                 .edgesIgnoringSafeArea(.all)
 
             VStack {
@@ -29,11 +29,10 @@ struct SignUpView: View {
                 Spacer()
             }
 
-
             VStack(spacing: 20) {
-                Text("アカウント登録")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundColor(.blue)
+                Text("SignUp")
+                    .font(.system(size: 32, weight: .bold))
+                    .foregroundColor(.customPink)
                     .padding(.bottom, 20)
 
                 VStack(spacing: 16) {
@@ -43,13 +42,9 @@ struct SignUpView: View {
                         }
                     })
                     .padding()
-                    .background(isUsernameFocused ? Color.blue.opacity(0.1) : Color.white)
+                    .background(Color.white.opacity(0.8))
                     .cornerRadius(12)
-                    .shadow(color: isUsernameFocused ? Color.blue.opacity(0.3) : Color.gray.opacity(0.2), radius: 4, x: 0, y: 2)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(isUsernameFocused ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
-                    )
+                    .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 5)
 
                     TextField("メールアドレス", text: $viewModel.email, onEditingChanged: { editing in
                         withAnimation {
@@ -58,28 +53,20 @@ struct SignUpView: View {
                     })
                     .keyboardType(.emailAddress)
                     .padding()
-                    .background(isEmailFocused ? Color.blue.opacity(0.1) : Color.white)
+                    .background(Color.white.opacity(0.8))
                     .cornerRadius(12)
-                    .shadow(color: isEmailFocused ? Color.blue.opacity(0.3) : Color.gray.opacity(0.2), radius: 4, x: 0, y: 2)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(isEmailFocused ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
-                    )
+                    .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 5)
 
                     SecureField("パスワード", text: $viewModel.password)
                         .padding()
-                        .background(isPasswordFocused ? Color.blue.opacity(0.1) : Color.white)
+                        .background(Color.white.opacity(0.8))
                         .cornerRadius(12)
-                        .shadow(color: isPasswordFocused ? Color.blue.opacity(0.3) : Color.gray.opacity(0.2), radius: 4, x: 0, y: 2)
+                        .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 5)
                         .onTapGesture {
                             withAnimation {
                                 isPasswordFocused = true
                             }
                         }
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(isPasswordFocused ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
-                        )
                 }
                 .padding(.horizontal, 32)
                 .padding(.bottom, 20)
@@ -92,9 +79,9 @@ struct SignUpView: View {
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
+                        .background(LinearGradient(gradient: Gradient(colors: [Color.customPink,Color.customLightPink.opacity(0.5)]), startPoint: .bottomLeading, endPoint: .topLeading))
                         .cornerRadius(25)
-                        .shadow(color: Color.purple.opacity(0.5), radius: 10, x: 0, y: 5)
+                        .shadow(color: Color.CustomPink.opacity(0.5), radius: 10, x: 0, y: 5)
                 }
                 .padding(.horizontal, 32)
 
@@ -108,18 +95,31 @@ struct SignUpView: View {
                 }
 
                 Button(action: {
-                    let loginView = UIHostingController(rootView: LoginView())
+                    let loginView = UIHostingController(rootView: SigninView())
                     if let window = UIApplication.shared.windows.first {
                         window.rootViewController = loginView
                         window.makeKeyAndVisible()
                     }
                 }) {
-                    Text("ログインに戻る")
-                        .font(.headline)
-                        .foregroundColor(.blue)
+                    HStack {
+                        Image(systemName: "chevron.left")
+                            .foregroundStyle(Color.customPink)
+                        Text("サインインへ戻る")
+                            .font(.headline)
+                            .foregroundColor(.customPink)
+                            .fontWeight(.bold)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white.opacity(0.8))
+                    .cornerRadius(25)
+                    .shadow(color: Color.CustomPink.opacity(0.5), radius: 10, x: 0, y: 5)
                 }
-                .padding(.top, 10)
+                .padding(.horizontal, 32)
             }
+        }
+        .onTapGesture {
+            UIApplication.shared.hideKeyboard()
         }
         .animation(.easeInOut, value: viewModel.errorMessage)
     }
