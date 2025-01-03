@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Colorful
 
 struct MainQRCodeView: View {
     @State private var isShowingQRCodeGenerator = false
@@ -19,62 +20,81 @@ struct MainQRCodeView: View {
         if navigateToTabBar {
             CustomTabBar()
         } else {
-            NavigationView {
+            ZStack {
+                ColorfulView(animation: .easeInOut(duration: 0.5), colors: [.customBlue, .customLightBlue.opacity(0.5)])
+                    .ignoresSafeArea()
+
+                VStack {
+                    Spacer()
+                    RoundedRectangle(cornerRadius: 25)
+                        .fill(Color.white.opacity(0.6))
+                        .frame(width: UIScreen.main.bounds.width * 0.93, height: UIScreen.main.bounds.height * 0.57)
+                        .shadow(color: .gray.opacity(0.5), radius: 5, x: 0, y: 5)
+                    Spacer()
+                }
+
                 VStack(spacing: 20) {
-                    Text("QRコードを選択")
+                    Spacer()
+                    Text("グループを作成しよう")
                         .font(.largeTitle)
-                        .bold()
-                        .padding()
+                        .fontWeight(.bold)
+                        .foregroundColor(.customBlue)
+                        .shadow(color: .gray.opacity(0.5), radius: 5, x: 0, y: 3)
+                        .padding(.bottom, 10)
+
+                    Text("グループを作成するか、\n グループに参加してください。")
+                        .font(.body)
+                        .foregroundColor(.customBlue)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                        .padding(.bottom, 20)
 
                     Button(action: {
                         isShowingQRCodeGenerator = true
                     }) {
-                        Text("QRコードを生成")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .cornerRadius(10)
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title)
+                                .foregroundColor(.white)
+                            Text("グループを作成する")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(LinearGradient(gradient: Gradient(colors: [Color.customBlue, Color.customLightBlue]), startPoint: .leading, endPoint: .trailing))
+                        .cornerRadius(25)
+                        .shadow(color: Color.customBlue.opacity(0.5), radius: 10, x: 0, y: 5)
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 32)
 
                     Button(action: {
                         isShowingQRCodeScanner = true
                     }) {
-                        Text("QRコードを読み込む")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.green)
-                            .cornerRadius(10)
+                        HStack {
+                            Image(systemName: "person.3.fill")
+                                .font(.title)
+                                .foregroundColor(.customBlue)
+                            Text("グループに参加する")
+                                .font(.headline)
+                                .foregroundColor(.customBlue)
+                                .fontWeight(.bold)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.white.opacity(0.8))
+                        .cornerRadius(25)
+                        .shadow(color: Color.customBlue.opacity(0.5), radius: 10, x: 0, y: 5)
                     }
-                    .padding(.horizontal, 20)
-
-
-                    Button(action: {
-                        authViewModel.logout()
-                    }) {
-                        Text("ログアウト")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.red)
-                            .cornerRadius(10)
-                    }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 32)
 
                     if isLoading {
                         ProgressView()
-                    }
-
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(1.5)
                             .padding()
                     }
+                    Spacer()
                 }
                 .sheet(isPresented: $isShowingQRCodeGenerator) {
                     QRCodeGeneratorView()
@@ -84,9 +104,9 @@ struct MainQRCodeView: View {
                     QRCodeGroupCreationView(navigateToTabBar: $navigateToTabBar)
                         .environmentObject(authViewModel)
                 }
-            }
-            .onAppear {
-                checkUserMembership()
+                .onAppear {
+                    checkUserMembership()
+                }
             }
         }
     }
