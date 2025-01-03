@@ -14,10 +14,20 @@ class AuthViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var errorMessage: String = ""
     @Published var isSignedUp: Bool = false
-    @Published var isLoggedIn: Bool = false
+    @Published var isLoggedIn: Bool = false {
+        didSet {
+            // ログイン状態を保存
+            UserDefaults.standard.set(isLoggedIn, forKey: "isLoggedIn")
+        }
+    }
+
+    init() {
+        // アプリ起動時にログイン状態を取得
+        self.isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
+    }
 
     func signUp() {
-        Task {
+        Task { [weak self] in
             do {
                 let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
                 let uid = authResult.user.uid
@@ -26,58 +36,36 @@ class AuthViewModel: ObservableObject {
                 try await FirebaseClient.settingProfile(data: profileModel, uid: uid)
 
                 DispatchQueue.main.async {
-                    self.isSignedUp = true
-                    self.isLoggedIn = true
-                    self.errorMessage = ""
+                    self?.isSignedUp = true
+                    self?.isLoggedIn = true
+                    self?.errorMessage = ""
                 }
             } catch {
                 DispatchQueue.main.async {
-                    self.isSignedUp = false
-                    self.isLoggedIn = false
-                    self.errorMessage = "エラー: \(error.localizedDescription)"
-                }
-            }
-        }
-    }
-
-    func signUpAndLogin() {
-        Task {
-            do {
-                let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-                let uid = authResult.user.uid
-
-                let profileData = ProfileModel(name: name, createdAt: Date())
-                try await FirebaseClient.settingProfile(data: profileData, uid: uid)
-
-                DispatchQueue.main.async {
-                    self.isLoggedIn = true
-                    self.errorMessage = ""
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    self.errorMessage = "エラー: \(error.localizedDescription)"
+                    self?.isSignedUp = false
+                    self?.isLoggedIn = false
+                    self?.errorMessage = "エラー: \(error.localizedDescription)"
                 }
             }
         }
     }
 
     func login() {
-        Task {
+        Task { [weak self] in
             do {
                 try await Auth.auth().signIn(withEmail: email, password: password)
                 DispatchQueue.main.async {
-                    self.isLoggedIn = true
-                    self.errorMessage = ""
+                    self?.isLoggedIn = true
+                    self?.errorMessage = ""
                 }
             } catch {
                 DispatchQueue.main.async {
-                    self.isLoggedIn = false
-                    self.errorMessage = "ログインエラー: \(error.localizedDescription)"
+                    self?.isLoggedIn = false
+                    self?.errorMessage = "ログインエラー: \(error.localizedDescription)"
                 }
             }
         }
     }
-
 
     func logout() {
         do {
@@ -94,36 +82,37 @@ class AuthViewModel: ObservableObject {
     }
 
     func resetPassword() {
-        Task {
+        Task { [weak self] in
             do {
                 try await Auth.auth().sendPasswordReset(withEmail: email)
 
                 DispatchQueue.main.async {
-                    self.errorMessage = "パスワードリセットメールを送信しました。"
+                    self?.errorMessage = "パスワードリセットメールを送信しました。"
                 }
             } catch {
                 DispatchQueue.main.async {
-                    self.errorMessage = "パスワードリセットエラー: \(error.localizedDescription)"
+                    self?.errorMessage = "パスワードリセットエラー: \(error.localizedDescription)"
                 }
             }
         }
     }
+
     func fetchProfile() {
-        Task {
+        Task { [weak self] in
             do {
                 guard let uid = Auth.auth().currentUser?.uid else {
                     DispatchQueue.main.async {
-                        self.errorMessage = "ユーザーが見つかりません。"
+                        self?.errorMessage = "ユーザーが見つかりません。"
                     }
                     return
                 }
                 let profile = try await FirebaseClient.getProfileData(uid: uid)
                 DispatchQueue.main.async {
-                    self.name = profile.name
+                    self?.name = profile.name
                 }
             } catch {
                 DispatchQueue.main.async {
-                    self.errorMessage = "プロフィール取得エラー: \(error.localizedDescription)"
+                    self?.errorMessage = "プロフィール取得エラー: \(error.localizedDescription)"
                 }
             }
         }
