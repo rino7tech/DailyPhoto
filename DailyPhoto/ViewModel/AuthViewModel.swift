@@ -27,11 +27,13 @@ class AuthViewModel: ObservableObject {
 
                 DispatchQueue.main.async {
                     self.isSignedUp = true
+                    self.isLoggedIn = true
                     self.errorMessage = ""
                 }
             } catch {
                 DispatchQueue.main.async {
                     self.isSignedUp = false
+                    self.isLoggedIn = false
                     self.errorMessage = "エラー: \(error.localizedDescription)"
                 }
             }

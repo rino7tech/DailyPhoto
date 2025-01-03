@@ -95,7 +95,7 @@ struct SignUpView: View {
                 }
 
                 Button(action: {
-                    let loginView = UIHostingController(rootView: SigninView())
+                    let loginView = UIHostingController(rootView: SignInView())
                     if let window = UIApplication.shared.windows.first {
                         window.rootViewController = loginView
                         window.makeKeyAndVisible()
