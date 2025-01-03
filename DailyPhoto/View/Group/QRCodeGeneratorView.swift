@@ -14,76 +14,113 @@ struct QRCodeGeneratorView: View {
     @State private var errorMessage: String?
     @State private var successMessage: String?
     @State private var generatedGroupId: String?
+    @State private var groupMembers: [String] = []
+    @State private var shouldShowTabBar = false
     let groupName = "My Group"
 
     var body: some View {
-        VStack(spacing: 20) {
-            if let currentUID = authViewModel.currentUID {
-                Text("QRコードを生成して共有してください")
-                    .font(.headline)
-                    .padding()
-
-                let qrCodeContent = generatedGroupId ?? currentUID
-
-                if let qrImage = generateQRCode(from: qrCodeContent) {
-                    Image(uiImage: qrImage)
-                        .resizable()
-                        .interpolation(.none)
-                        .scaledToFit()
-                        .frame(width: 200, height: 200)
+        if shouldShowTabBar {
+            CustomTabBar()
+        } else {
+            VStack(spacing: 20) {
+                if let currentUID = authViewModel.currentUID {
+                    Text("QRコードを生成して共有してください")
+                        .font(.title3)
+                        .fontWeight(.semibold)
                         .padding()
-                } else {
-                    Text("QRコードの生成に失敗しました")
-                        .foregroundColor(.red)
-                }
 
-                if generatedGroupId == nil {
+                    if let qrCodeContent = generatedGroupId {
+                        if let qrImage = generateQRCode(from: qrCodeContent) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.gray.opacity(0.1))
+                                    .frame(width: 220, height: 220)
+
+                                Image(uiImage: qrImage)
+                                    .resizable()
+                                    .interpolation(.none)
+                                    .scaledToFit()
+                                    .frame(width: 200, height: 200)
+                            }
+                            .padding()
+                        } else {
+                            Text("QRコードの生成に失敗しました")
+                                .foregroundColor(.red)
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("参加メンバー")
+                            .font(.headline)
+                            .padding(.vertical, 10)
+
+                        if groupMembers.isEmpty {
+                            Text("まだメンバーはいません")
+                                .foregroundColor(.gray)
+                                .font(.subheadline)
+                        } else {
+                            List(groupMembers, id: \.self) { member in
+                                Text(member)
+                                    .font(.body)
+                            }
+                            .frame(maxHeight: 150)
+                            .cornerRadius(10)
+                        }
+                    }
+
                     Button(action: {
-                        generateGroup(ownerId: currentUID)
+                        if let groupId = generatedGroupId {
+                            fetchGroupMembers(groupId: groupId)
+                        }
                     }) {
-                        Text("グループ作成とQRコード生成")
+                        HStack {
+                            if isSaving {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                            }
+                            Text("参加メンバーをリロード")
+                        }
+                        .font(.body)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue.opacity(0.2))
+                        .foregroundColor(.blue)
+                        .cornerRadius(10)
+                    }
+
+                    Button(action: {
+                        shouldShowTabBar = true
+                    }) {
+                        Text("完了")
+                            .font(.title3)
+                            .bold()
                             .foregroundColor(.white)
                             .padding()
                             .frame(maxWidth: .infinity)
                             .background(Color.blue)
                             .cornerRadius(10)
                     }
-                    .padding(.horizontal, 20)
-                    .disabled(isSaving)
+                    .padding(.top)
+
                 } else {
-                    Button(action: {
-                        saveGroupToFirebase(ownerId: currentUID)
-                    }) {
-                        Text("メンバー追加完了")
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.green)
-                            .cornerRadius(10)
-                    }
-                    .padding(.horizontal, 20)
-                    .disabled(isSaving)
-                }
-
-                if let successMessage {
-                    Text(successMessage)
-                        .foregroundColor(.green)
-                        .padding(.top, 10)
-                }
-
-                if let errorMessage {
-                    Text(errorMessage)
+                    Text("ユーザーIDを取得できませんでした")
+                        .font(.body)
                         .foregroundColor(.red)
-                        .padding(.top, 10)
+                        .padding()
+                        .background(Color.red.opacity(0.1))
+                        .cornerRadius(10)
                 }
-            } else {
-                Text("ユーザーIDを取得できませんでした")
-                    .foregroundColor(.red)
             }
+            .onAppear {
+                generateGroupAndQRCode()
+            }
+            .padding()
+            .background(Color(UIColor.systemGroupedBackground))
+            .edgesIgnoringSafeArea(.bottom)
         }
-        .padding()
     }
 
+    // 以下のメソッドはそのまま
     private func generateQRCode(from string: String) -> UIImage? {
         let data = string.data(using: .utf8)
         guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
@@ -101,7 +138,12 @@ struct QRCodeGeneratorView: View {
         return nil
     }
 
-    private func generateGroup(ownerId: String) {
+    private func generateGroupAndQRCode() {
+        guard let currentUID = authViewModel.currentUID else {
+            errorMessage = "ユーザーIDが取得できませんでした"
+            return
+        }
+
         Task {
             do {
                 isSaving = true
@@ -110,35 +152,27 @@ struct QRCodeGeneratorView: View {
 
                 let groupId = UUID().uuidString
                 generatedGroupId = groupId
-                successMessage = "グループIDが生成されました: \(groupId)"
+
+                let group = GroupModel(id: groupId, name: groupName, createdAt: Date(), members: [currentUID])
+                try await FirebaseClient.createGroup(group: group)
+
+                successMessage = "グループが作成され、QRコードが生成されました: \(groupId)"
+                fetchGroupMembers(groupId: groupId)
                 isSaving = false
             } catch {
-                errorMessage = "グループの生成に失敗しました: \(error.localizedDescription)"
+                errorMessage = "グループの作成に失敗しました: \(error.localizedDescription)"
                 isSaving = false
             }
         }
     }
 
-    private func saveGroupToFirebase(ownerId: String) {
+    private func fetchGroupMembers(groupId: String) {
         Task {
             do {
-                isSaving = true
-                errorMessage = nil
-                successMessage = nil
-
-                guard let groupId = generatedGroupId else {
-                    errorMessage = "グループIDが生成されていません"
-                    isSaving = false
-                    return
-                }
-
-                let group = GroupModel(id: groupId, name: groupName, createdAt: Date(), members: [ownerId])
-                try await FirebaseClient.createGroup(group: group)
-                successMessage = "グループが保存されました: \(groupId)"
-                isSaving = false
+                let group = try await FirebaseClient.fetchGroup(groupId: groupId)
+                groupMembers = group.members
             } catch {
-                errorMessage = "グループの保存に失敗しました: \(error.localizedDescription)"
-                isSaving = false
+                errorMessage = "参加者の取得に失敗しました: \(error.localizedDescription)"
             }
         }
     }

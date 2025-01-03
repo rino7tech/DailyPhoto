@@ -74,6 +74,25 @@ struct SignInView: View {
                 .padding(.horizontal, 32)
 
                 Button(action: {
+                    let signUpView = UIHostingController(rootView: SignUpView(viewModel: viewModel))
+                    if let window = UIApplication.shared.windows.first {
+                        window.rootViewController = signUpView
+                        window.makeKeyAndVisible()
+                    }
+                }) {
+                    Text("新規登録")
+                        .font(.headline)
+                        .foregroundColor(.customPink)
+                        .fontWeight(.bold)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.white.opacity(0.8))
+                        .cornerRadius(25)
+                        .shadow(color: Color.CustomPink.opacity(0.5), radius: 10, x: 0, y: 5)
+                }
+                .padding(.horizontal, 32)
+
+                Button(action: {
                     viewModel.resetPassword()
                 }) {
                     Text("パスワードをお忘れですか？")

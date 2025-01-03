@@ -8,28 +8,21 @@
 import SwiftUI
 
 struct QRCodeGroupCreationView: View {
+    @Binding var navigateToTabBar: Bool
     @State private var scannedGroupId: String?
     @State private var isScanning = false
     @State private var isLoading = false
+    @State private var successMessage: String?
     @State private var errorMessage: String?
 
     @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
         VStack {
-            if let scannedGroupId {
-                Text("グループID: \(scannedGroupId)")
+            if let successMessage {
+                Text(successMessage)
+                    .foregroundColor(.green)
                     .padding()
-
-                Button(action: {
-                    createGroupWithScannedID(groupId: scannedGroupId)
-                }) {
-                    Text("グループ作成を承認")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.green)
-                        .cornerRadius(8)
-                }
             } else {
                 Button(action: {
                     isScanning = true
@@ -56,13 +49,14 @@ struct QRCodeGroupCreationView: View {
             QRCodeScannerView { scannedValue in
                 scannedGroupId = scannedValue
                 isScanning = false
+                handleScannedGroupId()
             }
         }
     }
 
-    private func createGroupWithScannedID(groupId: String) {
-        guard let currentUserId = authViewModel.currentUID else {
-            errorMessage = "ログインが必要です。"
+    private func handleScannedGroupId() {
+        guard let scannedGroupId, let currentUserId = authViewModel.currentUID else {
+            errorMessage = "QRコードまたはログイン情報が不正です。"
             return
         }
 
@@ -70,12 +64,17 @@ struct QRCodeGroupCreationView: View {
             do {
                 isLoading = true
                 errorMessage = nil
-                try await FirebaseClient.addMemberToGroup(groupId: groupId, memberId: currentUserId)
+                try await FirebaseClient.addMemberToGroup(groupId: scannedGroupId, memberId: currentUserId)
                 isLoading = false
-                errorMessage = nil
+                successMessage = "グループに参加しました！"
+
+                // 遷移フラグを true に設定
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    navigateToTabBar = true
+                }
             } catch {
                 isLoading = false
-                errorMessage = "グループ作成に失敗しました: \(error.localizedDescription)"
+                errorMessage = "グループ参加に失敗しました: \(error.localizedDescription)"
             }
         }
     }

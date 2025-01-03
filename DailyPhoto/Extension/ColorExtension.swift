@@ -8,7 +8,8 @@
 import SwiftUI
 
 extension Color {
-    static let CustomMintBlue = Color("CustomMintBlue")
+    static let CustomBlue = Color("CustomBlue")
+    static let CustomLightBlue = Color("CustomLightBlue")
     static let CustomPink = Color("CustomPink")
     static let CustomLightPink = Color("CustomLightPink")
     static let CustomYellow = Color("CustomYellow")
