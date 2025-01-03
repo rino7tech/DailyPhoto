@@ -8,7 +8,8 @@
 import Foundation
 import FirebaseFirestore
 
-struct ProfileModel: Codable {
+struct ProfileModel: Codable, Identifiable {
+    var id: String 
     let name: String
     let createdAt: Date
 

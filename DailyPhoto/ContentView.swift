@@ -12,7 +12,7 @@ struct ContentView: View {
 
     var body: some View {
         if authViewModel.isLoggedIn, let uid = authViewModel.currentUID {
-            CustomTabBar()
+            MainQRCodeView()
         } else {
             SignInView(viewModel: authViewModel)
         }
