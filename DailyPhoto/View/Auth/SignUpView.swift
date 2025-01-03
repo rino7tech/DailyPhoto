@@ -24,7 +24,7 @@ struct SignUpView: View {
                 Spacer()
                 RoundedRectangle(cornerRadius: 25)
                     .fill(Color.white.opacity(0.5))
-                    .frame(width: UIScreen.main.bounds.width * 0.93, height: UIScreen.main.bounds.height * 0.57)
+                    .frame(width: UIScreen.main.bounds.width * 0.93, height: UIScreen.main.bounds.height * 0.6)
                     .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
                 Spacer()
             }

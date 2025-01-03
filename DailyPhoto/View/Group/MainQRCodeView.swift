@@ -1,5 +1,5 @@
 //
-//  QRCodeCompletionView.swift
+//  MainQRCodeView.swift
 //  DailyPhoto
 //
 //  Created by 伊藤璃乃 on 2025/01/03.
@@ -40,9 +40,9 @@ struct MainQRCodeView: View {
                     .padding(.horizontal, 20)
 
                     Button(action: {
-                        checkUserMembership()
+                        isShowingQRCodeScanner = true
                     }) {
-                        Text("グループに所属しているか確認")
+                        Text("QRコードを読み込む")
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding()
@@ -51,6 +51,7 @@ struct MainQRCodeView: View {
                             .cornerRadius(10)
                     }
                     .padding(.horizontal, 20)
+
 
                     Button(action: {
                         authViewModel.logout()
@@ -80,10 +81,8 @@ struct MainQRCodeView: View {
                         .environmentObject(authViewModel)
                 }
                 .sheet(isPresented: $isShowingQRCodeScanner) {
-                    QRCodeScannerView { scannedValue in
-                        // スキャン結果を保持
-                        isShowingQRCodeScanner = false
-                    }
+                    QRCodeGroupCreationView(navigateToTabBar: $navigateToTabBar)
+                        .environmentObject(authViewModel)
                 }
             }
             .onAppear {
