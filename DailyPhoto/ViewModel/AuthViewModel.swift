@@ -16,13 +16,11 @@ class AuthViewModel: ObservableObject {
     @Published var isSignedUp: Bool = false
     @Published var isLoggedIn: Bool = false {
         didSet {
-            // ログイン状態を保存
             UserDefaults.standard.set(isLoggedIn, forKey: "isLoggedIn")
         }
     }
 
     init() {
-        // アプリ起動時にログイン状態を取得
         self.isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     }
 
