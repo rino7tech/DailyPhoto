@@ -19,9 +19,11 @@ class AuthViewModel: ObservableObject {
             UserDefaults.standard.set(isLoggedIn, forKey: "isLoggedIn")
         }
     }
+    @Published var currentUID: String? = nil
 
     init() {
         self.isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
+        self.currentUID = Auth.auth().currentUser?.uid
     }
 
     func signUp() {
@@ -29,6 +31,7 @@ class AuthViewModel: ObservableObject {
             do {
                 let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
                 let uid = authResult.user.uid
+                self?.currentUID = uid
 
                 let profileModel = ProfileModel(name: name, createdAt: Date())
                 try await FirebaseClient.settingProfile(data: profileModel, uid: uid)
@@ -51,7 +54,9 @@ class AuthViewModel: ObservableObject {
     func login() {
         Task { [weak self] in
             do {
-                try await Auth.auth().signIn(withEmail: email, password: password)
+                let authResult = try await Auth.auth().signIn(withEmail: email, password: password)
+                self?.currentUID = authResult.user.uid
+
                 DispatchQueue.main.async {
                     self?.isLoggedIn = true
                     self?.errorMessage = ""
@@ -69,6 +74,7 @@ class AuthViewModel: ObservableObject {
         do {
             try Auth.auth().signOut()
             DispatchQueue.main.async {
+                self.currentUID = nil
                 self.isLoggedIn = false
                 self.errorMessage = ""
             }
@@ -78,7 +84,6 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
-
     func resetPassword() {
         Task { [weak self] in
             do {

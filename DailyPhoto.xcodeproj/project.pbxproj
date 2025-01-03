@@ -17,6 +17,7 @@
 		237F90FF2D26C38D0077E851 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 237F90FE2D26C38D0077E851 /* FirebaseStorage */; };
 		237F91312D26E09E0077E851 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 237F91302D26E09E0077E851 /* GoogleService-Info.plist */; };
 		237F914D2D270CF00077E851 /* Colorful in Frameworks */ = {isa = PBXBuildFile; productRef = 237F914C2D270CF00077E851 /* Colorful */; };
+		237F91752D27E5090077E851 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 237F91742D27E5090077E851 /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 				237F90F52D26C38D0077E851 /* FirebaseCore in Frameworks */,
 				237F90FD2D26C38D0077E851 /* FirebaseMessaging in Frameworks */,
 				237F90F72D26C38D0077E851 /* FirebaseDatabase in Frameworks */,
+				237F91752D27E5090077E851 /* Kingfisher in Frameworks */,
 				237F90FB2D26C38D0077E851 /* FirebaseFunctions in Frameworks */,
 				237F914D2D270CF00077E851 /* Colorful in Frameworks */,
 				237F90FF2D26C38D0077E851 /* FirebaseStorage in Frameworks */,
@@ -98,6 +100,7 @@
 				237F90FC2D26C38D0077E851 /* FirebaseMessaging */,
 				237F90FE2D26C38D0077E851 /* FirebaseStorage */,
 				237F914C2D270CF00077E851 /* Colorful */,
+				237F91742D27E5090077E851 /* Kingfisher */,
 			);
 			productName = DailyPhoto;
 			productReference = 237F90532D267A770077E851 /* DailyPhoto.app */;
@@ -130,6 +133,7 @@
 			packageReferences = (
 				237F90EF2D26C38D0077E851 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				237F914B2D270CF00077E851 /* XCRemoteSwiftPackageReference "Colorful" */,
+				237F91732D27E5090077E851 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 237F90542D267A770077E851 /* Products */;
@@ -382,6 +386,14 @@
 				minimumVersion = 1.1.1;
 			};
 		};
+		237F91732D27E5090077E851 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -429,6 +441,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 237F914B2D270CF00077E851 /* XCRemoteSwiftPackageReference "Colorful" */;
 			productName = Colorful;
+		};
+		237F91742D27E5090077E851 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 237F91732D27E5090077E851 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

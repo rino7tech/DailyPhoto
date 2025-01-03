@@ -11,8 +11,8 @@ struct ContentView: View {
     @StateObject private var authViewModel = AuthViewModel()
 
     var body: some View {
-        if authViewModel.isLoggedIn {
-            HomeView()
+        if authViewModel.isLoggedIn, let uid = authViewModel.currentUID {
+            ImageListView(uid: uid)
         } else {
             SignInView(viewModel: authViewModel)
         }
