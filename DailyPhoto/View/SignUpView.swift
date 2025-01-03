@@ -72,7 +72,7 @@ struct SignUpView: View {
                 .padding(.bottom, 20)
 
                 Button(action: {
-                    viewModel.signUpAndLogin()
+                    viewModel.signUp()
                 }) {
                     Text("アカウント登録")
                         .font(.headline)
@@ -95,7 +95,7 @@ struct SignUpView: View {
                 }
 
                 Button(action: {
-                    let loginView = UIHostingController(rootView: SignInView())
+                    let loginView = UIHostingController(rootView: SignInView(viewModel: viewModel))
                     if let window = UIApplication.shared.windows.first {
                         window.rootViewController = loginView
                         window.makeKeyAndVisible()
