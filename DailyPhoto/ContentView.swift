@@ -12,7 +12,7 @@ struct ContentView: View {
 
     var body: some View {
         if authViewModel.isLoggedIn, let uid = authViewModel.currentUID {
-            ImageListView(uid: uid)
+            CustomTabBar()
         } else {
             SignInView(viewModel: authViewModel)
         }
