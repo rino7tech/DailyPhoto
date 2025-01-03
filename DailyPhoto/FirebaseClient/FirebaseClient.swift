@@ -60,4 +60,11 @@ enum FirebaseClient {
 
         return try Firestore.Decoder().decode(GroupModel.self, from: groupData)
     }
+    static func isUserInAnyGroup(userId: String) async throws -> Bool {
+        let db = Firestore.firestore()
+        let groupsRef = db.collection("groups")
+        let snapshot = try await groupsRef.whereField("members", arrayContains: userId).getDocuments()
+
+        return !snapshot.documents.isEmpty
+    }
 }
