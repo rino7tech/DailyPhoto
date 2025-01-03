@@ -33,7 +33,7 @@ class AuthViewModel: ObservableObject {
                 let uid = authResult.user.uid
                 self?.currentUID = uid
 
-                let profileModel = ProfileModel(name: name, createdAt: Date())
+                let profileModel = ProfileModel(id: currentUID ?? "", name: name, createdAt: Date())
                 try await FirebaseClient.settingProfile(data: profileModel, uid: uid)
 
                 DispatchQueue.main.async {

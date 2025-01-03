@@ -37,4 +37,27 @@ enum FirebaseClient {
         let document = try await db.collection("users").document(uid).getDocument()
         return try document.data(as: ProfileModel.self)
     }
+    static func createGroup(group: GroupModel) async throws -> String {
+        let groupRef = db.collection("groups").document(group.id)
+        try await groupRef.setData(group.encoded)
+        return group.id
+    }
+
+    static func addMemberToGroup(groupId: String, memberId: String) async throws {
+        let groupRef = db.collection("groups").document(groupId)
+        try await groupRef.updateData([
+            "members": FieldValue.arrayUnion([memberId])
+        ])
+    }
+
+    static func fetchGroup(groupId: String) async throws -> GroupModel {
+        let groupRef = db.collection("groups").document(groupId)
+        let document = try await groupRef.getDocument()
+
+        guard let groupData = document.data() else {
+            throw NSError(domain: "GroupFetchError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Group not found"])
+        }
+
+        return try Firestore.Decoder().decode(GroupModel.self, from: groupData)
+    }
 }
